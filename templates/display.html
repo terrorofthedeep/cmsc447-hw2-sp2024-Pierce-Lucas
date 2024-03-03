@@ -1,0 +1,87 @@
+{% extends "layout.html"%}
+{% block title %}
+Main page?
+{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <table border="0px">
+            <thead>
+                <th><strong>Name</strong></th>
+                <th><strong>ID</strong></th>
+                <th><strong>Points</strong></th>
+                <td></td>
+                <td></td>
+            </thead>
+
+            {% for row in rows %}
+            <tr>
+                <td>{{ row["name"] }}</td>
+                <td>{{ row["id"] }}</td>
+                <td>{{ row["points"] }}</td>
+                <td> 
+                    <dialog>
+                        <form action="{{url_for('editPerson')}}" method="POST"> 
+                            <button>Cancel</button>
+                            <p>Modal text here</p>
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="newName" value="{{ row['name'] }}">
+                            <label for="id">ID:</label>
+                            <input type="text" id="id" name="newID" value="{{ row['id'] }}">
+                            <label for="id">Points:</label>
+                            <input type="text" id="points" name="newPoints" value="{{ row['points'] }}">
+
+                            <input type="hidden" name="rowid" value="{{ row['rowid'] }}">
+                            <input type="submit" value="Confirm changes" style="background-color:lightgreen">
+                        </form>
+                    </dialog>
+                    <button>Edit</button>
+                </td>
+                
+                <td>
+                    <form onsubmit="return confirm('Are you sure you want to delete this person?')" action="{{url_for('deletePerson')}}" method="POST">
+                    <input type="hidden" name="id" value= "{{ row['id'] }}"><input type="submit" value="Delete"></form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+    
+    
+    <script>
+        //I don't think the first half of this code should be necessary but the program breaks if I remove it
+
+        //Javascript code for our modal (popup) for editing info
+        const dialog = document.querySelector("dialog");
+        const showButton = document.querySelector("dialog + button");
+        const closeButton = document.querySelector("dialog button");
+
+        // "Edit" button opens the dialog modally
+        
+        showButton.addEventListener("click", () => {
+            dialog.showModal();
+        });
+        // "Close" button closes the dialog
+        closeButton.addEventListener("click", () => {
+            dialog.close();
+        });
+
+        //This code does the same thing as the above code, but for all Edit/Close buttons, not just the 1st one
+        const allEditButtons = document.querySelectorAll("dialog + button");
+        const allModals = document.querySelectorAll("dialog");
+        const allCloseButtons = document.querySelectorAll("dialog button");
+        for (let i = 0; i < allEditButtons.length; i++) {
+            allEditButtons[i].addEventListener("click", () => {
+                allModals[i].showModal();
+            });
+            closeButton.addEventListener("click", () => {
+                allModals[i].close();
+            });
+        }
+
+    </script>
+    
+{% endblock %}
